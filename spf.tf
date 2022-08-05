@@ -20,7 +20,7 @@ locals {
   spf_record = var.spf_policy == null ? "" : join(" ", concat(
     ["v=${var.spf_policy.v}"],
     var.spf_policy.exp != null ? ["exp=${var.spf_policy.exp}"] : [],
-    [for service in var.spf_policy.auto : local.known_spf[service]],
+    [for service in coalesce(var.spf_policy.auto, []) : local.known_spf[service]],
     var.spf_policy.directives != null ? var.spf_policy.directives : [],
     var.spf_policy.redirect != null ? ["redirect=${var.spf_policy.redirect}"] : [],
     var.spf_policy.all != null ? [local.spf_all_policies[var.spf_policy.all]] : []
