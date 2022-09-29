@@ -1,26 +1,19 @@
 locals {
-  microsoft = defaults(var.microsoft, {
-    outlook      = false
-    autodiscover = false
-    skype        = false
-    intune       = false
-    dkim         = false
-  })
-  ms_domain = local.microsoft.domain != null ? local.microsoft.domain : replace(replace(local.fqdn, "-", ""), ".", "-")
+  ms_domain = var.microsoft.domain != null ? var.microsoft.domain : replace(replace(local.fqdn, "-", ""), ".", "-")
 }
 
 resource "cloudflare_record" "ms_verification" {
-  count = local.microsoft.verification != null ? 1 : 0
+  count = var.microsoft.verification != null ? 1 : 0
 
   zone_id = var.zone_id
   type    = "TXT"
   name    = local.fqdn
-  value   = local.microsoft.verification
+  value   = var.microsoft.verification
   ttl     = var.ttl
 }
 
 resource "cloudflare_record" "ms_mx" {
-  count = local.microsoft.outlook ? 1 : 0
+  count = var.microsoft.outlook ? 1 : 0
 
   zone_id  = var.zone_id
   type     = "MX"
@@ -31,7 +24,7 @@ resource "cloudflare_record" "ms_mx" {
 }
 
 resource "cloudflare_record" "ms_autodiscover" {
-  count = local.microsoft.autodiscover ? 1 : 0
+  count = var.microsoft.autodiscover ? 1 : 0
 
   zone_id = var.zone_id
   type    = "CNAME"
@@ -41,7 +34,7 @@ resource "cloudflare_record" "ms_autodiscover" {
 }
 
 resource "cloudflare_record" "sip" {
-  count = local.microsoft.skype ? 1 : 0
+  count = var.microsoft.skype ? 1 : 0
 
   zone_id = var.zone_id
   type    = "CNAME"
@@ -51,7 +44,7 @@ resource "cloudflare_record" "sip" {
 }
 
 resource "cloudflare_record" "lyncdiscover" {
-  count = local.microsoft.skype ? 1 : 0
+  count = var.microsoft.skype ? 1 : 0
 
   zone_id = var.zone_id
   type    = "CNAME"
@@ -61,7 +54,7 @@ resource "cloudflare_record" "lyncdiscover" {
 }
 
 resource "cloudflare_record" "_sip" {
-  count = local.microsoft.skype ? 1 : 0
+  count = var.microsoft.skype ? 1 : 0
 
   zone_id = var.zone_id
   type    = "SRV"
@@ -80,7 +73,7 @@ resource "cloudflare_record" "_sip" {
 }
 
 resource "cloudflare_record" "_sipfederationtls" {
-  count = local.microsoft.skype ? 1 : 0
+  count = var.microsoft.skype ? 1 : 0
 
   zone_id = var.zone_id
   type    = "SRV"
@@ -99,7 +92,7 @@ resource "cloudflare_record" "_sipfederationtls" {
 }
 
 resource "cloudflare_record" "enterpriseregistration" {
-  count = local.microsoft.intune ? 1 : 0
+  count = var.microsoft.intune ? 1 : 0
 
   zone_id = var.zone_id
   type    = "CNAME"
@@ -109,7 +102,7 @@ resource "cloudflare_record" "enterpriseregistration" {
 }
 
 resource "cloudflare_record" "enterpriseenrollment" {
-  count = local.microsoft.intune ? 1 : 0
+  count = var.microsoft.intune ? 1 : 0
 
   zone_id = var.zone_id
   type    = "CNAME"
@@ -120,11 +113,11 @@ resource "cloudflare_record" "enterpriseenrollment" {
 
 
 resource "cloudflare_record" "microsoft_dkim" {
-  for_each = toset(local.microsoft.dkim ? ["selector1", "selector2"] : [])
+  for_each = toset(var.microsoft.dkim ? ["selector1", "selector2"] : [])
 
   zone_id = var.zone_id
   type    = "CNAME"
   name    = "${each.value}._domainkey.${local.fqdn}"
-  value   = "${each.value}-${local.ms_domain}._domainkey.${local.microsoft.tenant}.onmicrosoft.com"
+  value   = "${each.value}-${local.ms_domain}._domainkey.${var.microsoft.tenant}.onmicrosoft.com"
   ttl     = var.ttl
 }

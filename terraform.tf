@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.1.4"
+  required_version = ">= 1.3.1"
 
   required_providers {
     cloudflare = {
@@ -11,6 +11,4 @@ terraform {
       version = ">= 0.7.2"
     }
   }
-
-  experiments = [module_variable_optional_attrs]
 }

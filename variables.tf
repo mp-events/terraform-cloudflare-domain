@@ -78,11 +78,11 @@ variable "microsoft" {
     verification = optional(string)
     tenant       = optional(string)
     domain       = optional(string)
-    outlook      = optional(bool)
-    autodiscover = optional(bool)
-    skype        = optional(bool)
-    intune       = optional(bool)
-    dkim         = optional(bool)
+    outlook      = optional(bool, false)
+    autodiscover = optional(bool, false)
+    skype        = optional(bool, false)
+    intune       = optional(bool, false)
+    dkim         = optional(bool, false)
   })
   default     = {}
   description = "Configures options to connect the domain to Microsoft."
@@ -90,14 +90,14 @@ variable "microsoft" {
 
 variable "mailgun" {
   type = object({
-    region = optional(string) # Defaults to "us"
-    dkim   = optional(bool)
-    spf    = optional(string) # Either "auto" or "custom". "custom" uses the module's SPF record. If "auto" you must not not
+    region = optional(string, "us")
+    dkim   = optional(bool, true)
+    spf    = optional(string, "auto") # Either "auto" or "custom". "custom" uses the module's SPF record. If "auto" you must not not
     # specify a spf_policy.
-    tracking      = optional(bool)
-    receiving     = optional(bool)
-    spam_action   = optional(string)
-    dkim_key_size = optional(number)
+    tracking      = optional(bool, true)
+    receiving     = optional(bool, true)
+    spam_action   = optional(string, "disabled")
+    dkim_key_size = optional(number, 2048)
   })
   default     = null
   description = "Configures options to connect the domain to Mailgun. Note that SPF and DKIM are required to verify the domain."
@@ -116,7 +116,7 @@ variable "ovh" {
   type = object({
     verification = optional(string)
     server       = optional(string)
-    email        = optional(bool)
+    email        = optional(bool, false)
   })
   default     = {}
   description = "Configure options to connect the domain to OVH."
@@ -126,7 +126,7 @@ variable "mailcheap" {
   type = object({
     verification = optional(string)
     host         = optional(string)
-    email        = optional(bool)
+    email        = optional(bool, false)
   })
   default     = {}
   description = "Configure options to connect the domain to Mailcheap."
@@ -135,7 +135,7 @@ variable "mailcheap" {
 variable "mxroute" {
   type = object({
     server = optional(string)
-    email  = optional(bool)
+    email  = optional(bool, false)
   })
   default     = {}
   description = "Configure options to connect the domain to MXRoute."
@@ -144,7 +144,7 @@ variable "mxroute" {
 variable "google" {
   type = object({
     verification = optional(string)
-    gmail        = optional(bool)
+    gmail        = optional(bool, false)
   })
   default     = {}
   description = "Configures options to connect the domain to Google."
