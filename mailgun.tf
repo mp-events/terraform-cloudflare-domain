@@ -7,13 +7,13 @@ locals {
   # - There may be multiple MX records
 
   mg_mx_records = var.mailgun != null ? {
-    for record in mailgun_domain.domain[0].receiving_records :
+    for record in mailgun_domain.domain[0].receiving_records_set :
     (record.value) => record.priority if record.record_type == "MX"
   } : {}
 
-  mg_dkim_record    = var.mailgun != null ? [for record in mailgun_domain.domain[0].sending_records : record if record.record_type == "TXT" && length(regexall("._domainkey.", record.name)) > 0][0] : null
-  mg_spf_record     = var.mailgun != null ? [for record in mailgun_domain.domain[0].sending_records : record if record.record_type == "TXT" && length(regexall("^v=spf1", record.value)) > 0][0] : null
-  mg_tracking_cname = var.mailgun != null ? [for record in mailgun_domain.domain[0].sending_records : record if record.record_type == "CNAME"][0] : null
+  mg_dkim_record    = var.mailgun != null ? [for record in mailgun_domain.domain[0].sending_records_set : record if record.record_type == "TXT" && length(regexall("._domainkey.", record.name)) > 0][0] : null
+  mg_spf_record     = var.mailgun != null ? [for record in mailgun_domain.domain[0].sending_records_set : record if record.record_type == "TXT" && length(regexall("^v=spf1", record.value)) > 0][0] : null
+  mg_tracking_cname = var.mailgun != null ? [for record in mailgun_domain.domain[0].sending_records_set : record if record.record_type == "CNAME"][0] : null
 }
 
 resource "mailgun_domain" "domain" {
